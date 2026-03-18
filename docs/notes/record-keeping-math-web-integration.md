@@ -1,99 +1,43 @@
--   The formula for declination (δ) of the Earth based on the day of the
-    year (t) is:
+# Documentation, Record-Keeping, Mathematical Formulation & Web Integration
 
-> $(\delta) = - \left\lbrack {\sin^{- 1}(}{\sin{(23.44{^\circ})}}x\cos\left( \left( \frac{2\pi}{360} \right)x(t + 10) \right) \right\rbrack$
+## Solar declination formula
 
--   *δ*(*t*) is the declination angle.
+$$\delta(t) = -\sin^{-1}\Big(\sin(23.44^\circ) \cdot \cos\big(\tfrac{2\pi}{365}(t + 10)\big)\Big)$$
 
--   *t* is the day of the year.
+- $\delta(t)$: declination angle in degrees.
+- $t$: day of year (1–365/366).
+- $\sin(23.44^\circ)$: Earth\'s axial tilt.
+- $(t+10)/365$: shifts the phase to align with the solstice.
 
--   Sin(23.44°) represents the sine of the Earth\'s axial tilt
-    (approximately 23.44°).
+This is the same expression in the original DOCX/PDF, but wrapped in GitHub-compatible math notation so it renders consistently on mobile.
 
--   $\left( \frac{t + 10}{365} \right)\ $adjusts the formula to account
-    for solstice.
+## Python helper
 
-```{=html}
-<!-- -->
-```
--   Developed a Python function to compute the declination angle based
-    on the current UTC time and a user-input adjustment. This function
-    is crucial for dynamically adjusting the website\'s view based on
-    the Earth\'s position relative to the sun.
-
--   The computed declination value, adjusted for the user\'s input, is
-    integrated into the web link
-    \"<https://earth.nullschool.net/#current/wind/surface/level/overlay=temp/orthographic=-107.56,11.34,200>\",
-    where \'107.56\' is the longitude, \'11.34\' is the declination
-    (delta t), and \'200\' is the zoom feature of the Earth. This web
-    link hosts all 11 profiles of Earth, and the declination value
-    ensures that the website\'s view is oriented correctly based on the
-    Earth\'s current tilt and position relative to the sun.
-
-> **Compute declination and adjust for UTC**
-
+```python
 import datetime
-
 import math
 
-def compute_declination(utc_adjustment=0):
+def compute_declination(utc_adjustment: float = 0.0) -> float:
+    'Return the solar declination angle (degrees) for the adjusted UTC time.'
+    current_utc_time = datetime.datetime.utcnow()
+    adjusted_time = current_utc_time + datetime.timedelta(hours=utc_adjustment)
+    day_of_year = adjusted_time.timetuple().tm_yday
+    declination_rad = -math.asin(
+        math.sin(math.radians(23.44)) * math.cos(2 * math.pi * (day_of_year + 10) / 365)
+    )
+    return math.degrees(declination_rad)
 
-    \# Get the current UTC time
+if __name__ == "__main__":
+    utc_adjustment = float(input("Enter the UTC adjustment in hours (e.g., 9 for PST): "))
+    declination_value = compute_declination(utc_adjustment)
+    print(f"Adjusted Declination Value: {declination_value:.2f} degrees")
+```
 
-    current_utc_time = datetime.datetime.utcnow()
+## Map references
 
-   
-
-    \# Adjust the UTC time based on user input
-
-    adjusted_time = current_utc_time +
-datetime.timedelta(hours=utc_adjustment)
-
-   
-
-    \# Determine the day of the year from the adjusted time
-
-    day_of_year = adjusted_time.timetuple().tm_yday
-
-   
-
-    \# Compute the declination angle using the formula
-
-    declination_rad = -math.asin(math.sin(math.radians(23.44)) \*
-math.cos(2 \* math.pi \* (day_of_year + 10) / 365))
-
-   
-
-    \# Convert declination from radians to degrees
-
-    declination_deg = math.degrees(declination_rad)
-
-   
-
-    return declination_deg
-
-\# Get UTC adjustment from the user
-
-utc_adjustment = float(input(\"Enter the UTC adjustment in hours (e.g.,
-9 for PST): \"))
-
-\# Compute and display the declination value
-
-declination_value = compute_declination(utc_adjustment)
-
-print(f\"Adjusted Declination Value: {declination_value:.2f} degrees\")
-
--   Current NOAA for radar in 5 minute intervals\
-    https://www.ncei.noaa.gov/maps/radar/
-
-    -   Replacement views:
-
-        -   World ("<https://www.ventusky.com/?p=27;-102;2&l=radar>")
-
-        -   N. American Continent
-            ("<https://www.ventusky.com/?p=36.2;-97.2;3&l=radar>")
-
-        -   U.S. ("https://www.ventusky.com/?p=39.4;-96.3;4&l=radar")
-
-        -   Local
-            ("<https://www.ventusky.com/?p=43.42;-76.38;6&l=radar>")
+- NOAA 5-minute radar: <https://www.ncei.noaa.gov/maps/radar/>
+- Ventusky replacements:
+  - World: <https://www.ventusky.com/?p=27;-102;2&l=radar>
+  - North American continent: <https://www.ventusky.com/?p=36.2;-97.2;3&l=radar>
+  - United States: <https://www.ventusky.com/?p=39.4;-96.3;4&l=radar>
+  - Local NY example: <https://www.ventusky.com/?p=43.42;-76.38;6&l=radar>
