@@ -1,0 +1,11 @@
+[
+  {
+    "name": "example-aaa",
+    "path": "/storage/projects/planetary-analysis/raw/example/aaa",
+    "fps": 5
+  },
+  {
+    "name": "example-bbb",
+    "path": "/storage/projects/planetary-analysis/raw/example/bbb"
+  }
+]
