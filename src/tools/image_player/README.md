@@ -21,6 +21,8 @@ python src/tools/image_player/image_player.py --config config/image_sets.example
 - `--recursive` – include images in subdirectories.
 - `--scale` – resize frames (e.g., `0.5`).
 - `--loop` – keep repeating until ESC is pressed.
+- `--export-dir` – write mp4s for each dataset (files named by dataset slug).
+- `--no-display` – skip on-screen playback (requires `--export-dir`).
 
 ## Config file format
 `config/image_sets.example.json` shows the expected structure:
